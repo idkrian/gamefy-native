@@ -1,86 +1,84 @@
 import { StyleSheet, TextInput } from 'react-native';
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
-import { RootTabScreenProps } from '../types';
 import { useState, useEffect } from 'react';
-import { Image } from 'react-native';
 import axios from 'axios';
+import { Text, View, Image, ScrollView, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function TabTwoScreen() {
 
-  const [weatherData, setWeatherData] = useState(null)
-  const [forecast, setForecast] = useState(null)
-  const [text, setText] = useState('');
+  const navigation = useNavigation()
+  const [text, setText] = useState('')
+  const [gameData, setGameData] = useState(null)
 
   const getData = () => {
-    axios.get('https://api.openweathermap.org/data/2.5/weather', {
+    axios.get('https://api.rawg.io/api/games', {
       params: {
-        appid: 'a84fa02c10f107905f4968c8ec0bea59',
-        q: text,
-        units: 'metric'
+        key: 'c9e0822a14d7419995ab6b17a4ff083f',
+        search: text,
       }
-    }).then(res => setWeatherData(res.data))
+    })
+      .then(res => setGameData(res.data.results))
   }
 
-  useEffect(() => {
-    axios.get('https://api.open-meteo.com/v1/forecast?daily=apparent_temperature_max,apparent_temperature_min&current_weather=true&timezone=America%2FSao_Paulo', {
-      params: {
-        latitude: weatherData?.coord.lat,
-        longitude: weatherData?.coord.lon
-      }
-    }).then(res => setForecast(res.data))
-  }, [weatherData])
-
+  const onPress = (data: any) => () => {
+    navigation.navigate('GameDetails', {
+      id: data
+    })
+  };
 
   return (
     <View style={styles.container}>
       <TextInput
         style={{ height: 40, backgroundColor: 'white' }}
-        placeholder="Type here to translate!"
-        onChangeText={newText => setText(newText)}
+        placeholder="Pesquisar"
+        onChangeText={e => setText(e)}
         onSubmitEditing={getData}
         returnKeyType='search'
       />
-      <View style={styles.calendar}>
-        {forecast?.daily.time.map((x: any) =>
-          <View style={{ margin: 2 }}>
-            <Text style={{
-              color: 'green', fontSize: 20,
-              fontWeight: 'bold',
-            }}>{x.slice(8, 10)}</Text>
+
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.container}>
+            {gameData?.map((data: any) => (
+              <Pressable key={data.id}
+                onPress={onPress(data.id)}
+              >
+                <Text style={{
+                  color: 'white',
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                }}>
+                  {data?.name}
+                </Text>
+                <Image
+                  style={{
+                    width: 300,
+                    height: 500,
+                  }}
+                  source={{
+                    uri: data.background_image
+                  }}
+                />
+              </Pressable>
+            ))}
           </View>
-        )}
-      </View>
-      <Text style={styles.title}>{weatherData?.name}</Text>
+        </View>
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  calendar: {
-    // flex: 1,
-    borderWidth: 5,
-    borderColor: 'green',
-    flexDirection: 'row',
-    width: '80%',
-    // height: 150,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  textInput: {
+    backgroundColor: 'white',
+    color: 'black'
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
+
 });
