@@ -17,17 +17,16 @@ const linking: LinkingOptions<RootStackParamList> = {
         screens: {
           TabOne: {
             screens: {
-              TabOneScreen: 'one',
+              Home: 'one',
             },
           },
           TabTwo: {
             screens: {
-              TabTwoScreen: 'two',
+              Search: 'two',
             },
           },
         },
       },
-      Modal: 'modal',
       NotFound: '*',
     },
   },

@@ -8,7 +8,7 @@ import axios from 'axios';
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
 
-  const [gameData, setGameData] = useState(null)
+  const [gameData, setGameData] = useState<{ map: any } | null>(null)
 
   useEffect(() => {
     axios.get('https://api.rawg.io/api/games', {
@@ -19,6 +19,7 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
   }, [])
 
   const onPress = (data: any) => () => {
+    // @ts-ignore
     navigation.navigate('GameDetails', {
       id: data
     })
@@ -27,21 +28,29 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
   return (
     <ScrollView>
       <View style={styles.container}>
-        <Text></Text>
+        <Text style={{
+          fontSize: 30,
+          fontWeight: 'bold',
+          color: '#00FF7F'
+        }}
+        >
+          Top Games
+        </Text>
         <View>
           {gameData?.map((data: any) => (
-            <Pressable key={data.id} onPress={onPress(data.id)}>
+            <Pressable style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }} key={data.id} onPress={onPress(data.id)}>
               <Text style={{
-                color: 'white',
+                color: '#00FF7F',
                 fontSize: 20,
                 fontWeight: 'bold',
+                marginBottom: 5
               }}>
                 {data?.name}
               </Text>
               <Image
                 style={{
-                  width: 300,
-                  height: 500,
+                  width: 350,
+                  height: 550,
                 }}
                 source={{
                   uri: data.background_image

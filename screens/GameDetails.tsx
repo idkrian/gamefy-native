@@ -7,20 +7,27 @@ import axios from 'axios'
 import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native'
 
+export type Gamedata = {
+    name: string
+    background_image: string
+    description_raw: string
+    developers: any
+    released: string
+    platforms: any
+}
 
 export default function GameDetails() {
-    const [gameData, setGameData] = useState(null)
+    const [gameData, setGameData] = useState<Gamedata | null>(null)
     const route = useRoute()
 
     useEffect(() => {
-        axios.get(`https://api.rawg.io/api/games/${route?.params.id}`, {
+        // @ts-ignore
+        axios.get(`https://api.rawg.io/api/games/${route?.params?.id}`, {
             params: {
                 key: 'c9e0822a14d7419995ab6b17a4ff083f',
             }
         }).then(res => setGameData(res.data))
     }, [])
-
-    // console.log(gameData?.platforms.map(data => data.platform.name))
 
     return (
         <ScrollView>
@@ -29,7 +36,7 @@ export default function GameDetails() {
                     style={{
                         fontSize: 20,
                         fontWeight: 'bold',
-                        color: 'white'
+                        color: '#00FF7F',
                     }}
                 >
                     {gameData?.name}
@@ -58,7 +65,7 @@ export default function GameDetails() {
                     </View>
                     <View style={styles.descriptionsDiv}>
                         <Text style={styles.title}>Platforms</Text>
-                        {gameData?.platforms.map((data, index) => (
+                        {gameData?.platforms.map((data: any, index: any) => (
                             <Text key={index} style={styles.description}>{data.platform.name}</Text>
                         ))}
                     </View>
@@ -87,7 +94,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: 'white'
+        color: '#00FF7F',
 
     },
 });
